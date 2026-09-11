@@ -4,11 +4,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.core.rate_limiter import reset_memory_store
 from app.routers import chat, health
 from app.services import docs_loader
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Reset rate limiter memory store on startup (dev only)
+    if settings.is_local_dev:
+        reset_memory_store()
     await docs_loader.startup()
     yield
     await docs_loader.shutdown()

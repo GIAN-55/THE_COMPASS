@@ -32,7 +32,7 @@ export function TopBar({ onToggleTheme }: TopBarProps) {
       <div class="flex items-center gap-3">
         <button
           type="button"
-          class="icon-btn md:hidden"
+          class="icon-btn"
           onClick={() => { sidebarOpen.value = !sidebarOpen.value }}
           aria-label={t('newConversation')}
         >

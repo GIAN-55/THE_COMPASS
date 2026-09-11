@@ -9,14 +9,14 @@ import { useChatActions } from './hooks/useChatActions'
 
 export function App() {
   useAppInit()
-  const { createConversation, removeConversation, sendMessage } = useChatActions()
+  const { createConversation, removeConversation, sendMessage, editMessage } = useChatActions()
 
   return (
     <div class="flex h-screen flex-col bg-[var(--bg)]">
       <TopBar onToggleTheme={handleThemeToggle} />
       <div class="flex flex-1 min-h-0">
         <Sidebar onNewConversation={() => createConversation()} />
-        <ChatWindow onSend={sendMessage} />
+        <ChatWindow onSend={sendMessage} onEdit={editMessage} />
       </div>
       <SettingsModal />
       <DisclaimerModal />

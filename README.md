@@ -90,10 +90,12 @@ Variables del backend (ver `backend/.env.example`). En producción, configúrala
 | `FRONTEND_ORIGIN` | Origen del frontend en producción (ej. URL de Netlify) |
 | `MANUAL_GIST_RAW_URL` | URL raw del Gist secreto con el Manual |
 | `INDICACIONES_GIST_RAW_URL` | URL raw del Gist secreto con las Indicaciones |
-| `GROQ_DEFAULT_API_KEY` | API key de Groq para modo gratuito |
+| `GEMINI_DEFAULT_API_KEY` | API key de Gemini para modo gratuito (usando Gemini 2.5 Flash) |
 | `TAVILY_API_KEY` | API key de Tavily para búsqueda web opcional |
 | `UPSTASH_REDIS_URL` | URL REST de Upstash Redis (rate limit) |
 | `UPSTASH_REDIS_TOKEN` | Token de Upstash Redis |
+
+**Nota:** El modo gratuito usa Gemini 2.5 Flash en lugar de Groq porque Gemini soporta ~250.000 TPM y hasta 1M tokens de contexto, necesario para procesar el prompt de sistema completo (~60.000-70.000 tokens). Groq tiene un límite de ~6.000-12.000 TPM que no es suficiente.
 
 Los documentos Manual e Indicaciones **nunca** se suben al repo. Se cargan en memoria al arrancar desde Gists secretos y se refrescan cada 10 minutos.
 
@@ -134,7 +136,7 @@ Todo el flujo usa tiers gratuitos: Netlify, Hugging Face Spaces, Upstash y Tavil
 
 | Secret | Valor |
 |--------|-------|
-| `GROQ_DEFAULT_API_KEY` | Tu API key de Groq |
+| `GEMINI_DEFAULT_API_KEY` | Tu API key de Gemini |
 | `MANUAL_GIST_RAW_URL` | URL raw del Gist del Manual |
 | `INDICACIONES_GIST_RAW_URL` | URL raw del Gist de Indicaciones |
 | `UPSTASH_REDIS_URL` | URL REST de Upstash |
@@ -183,7 +185,7 @@ Para cambiar el contenido en el futuro:
 **Hugging Face Spaces (Repository secrets):**
 
 ```
-GROQ_DEFAULT_API_KEY
+GEMINI_DEFAULT_API_KEY
 MANUAL_GIST_RAW_URL
 INDICACIONES_GIST_RAW_URL
 UPSTASH_REDIS_URL

@@ -8,14 +8,14 @@ class Settings(BaseSettings):
     frontend_origin: str = ""
     manual_gist_raw_url: str = ""
     indicaciones_gist_raw_url: str = ""
-    groq_default_api_key: str = ""
+    gemini_default_api_key: str = ""
     tavily_api_key: str = ""
     upstash_redis_url: str = ""
     upstash_redis_token: str = ""
     free_message_limit: int = 1000
     byok_message_limit: int = 5000
     free_daily_limit: int = 3
-    groq_default_model: str = "openai/gpt-oss-120b"
+    gemini_default_model: str = "gemini-2.5-flash"
     docs_refresh_seconds: int = 600
     provider_timeout_seconds: float = 30.0
 

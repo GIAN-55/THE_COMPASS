@@ -12,6 +12,7 @@ export const settingsOpen = signal(false)
 export const disclaimerOpen = signal(false)
 export const deleteTargetId = signal<string | null>(null)
 export const apiError = signal<string | null>(null)
+export const editingMessageId = signal<string | null>(null)
 
 export const activeConversation = computed(() =>
   conversations.value.find((c) => c.id === activeConversationId.value) ?? null,

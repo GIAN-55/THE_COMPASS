@@ -11,6 +11,7 @@ import {
   isLoading,
   providerConfig,
   truncateTitle,
+  editingMessageId,
 } from '../state/appState'
 
 function upsertConversation(updated: Conversation) {
@@ -51,7 +52,7 @@ export function useChatActions() {
     }
   }
 
-  async function sendMessage(text: string) {
+  async function sendMessage(text: string, isEdit = false) {
     const trimmed = text.trim()
     if (!trimmed || isLoading.value) return
     apiError.value = null
@@ -60,6 +61,21 @@ export function useChatActions() {
       const id = await createConversation()
       conv = conversations.value.find((c) => c.id === id)!
     }
+    
+    // If editing, remove the message being edited and all messages after it
+    if (isEdit && editingMessageId.value) {
+      const messageIndex = conv.messages.findIndex(m => m.id === editingMessageId.value)
+      if (messageIndex !== -1) {
+        conv = {
+          ...conv,
+          messages: conv.messages.slice(0, messageIndex),
+        }
+        upsertConversation(conv)
+        await saveConversation(conv)
+      }
+      editingMessageId.value = null
+    }
+    
     const userMessage: Message = { id: createId(), role: 'user', content: trimmed }
     const withUser: Conversation = {
       ...conv,
@@ -103,6 +119,10 @@ export function useChatActions() {
       isLoading.value = false
     }
   }
+  
+  function editMessage(messageId: string) {
+    editingMessageId.value = messageId
+  }
 
-  return { createConversation, removeConversation, sendMessage }
+  return { createConversation, removeConversation, sendMessage, editMessage }
 }

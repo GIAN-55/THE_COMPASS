@@ -1,4 +1,4 @@
-import { Plus, Trash2, X } from 'lucide-preact'
+import { Plus, Trash2 } from 'lucide-preact'
 import { useTranslation } from '../i18n/context'
 import {
   activeConversationId,
@@ -20,27 +20,19 @@ export function Sidebar({ onNewConversation }: SidebarProps) {
     <>
       {open && (
         <div
-          class="fixed inset-0 z-30 bg-black/40 md:hidden"
+          class="fixed inset-0 z-30 bg-black/40"
           onClick={() => { sidebarOpen.value = false }}
         />
       )}
       <aside
-        class={`fixed md:static inset-y-0 left-0 z-40 w-72 flex flex-col border-r border-[var(--border)] bg-[var(--surface)] transform transition-transform md:transform-none ${
-          open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        class={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[var(--border)] bg-[var(--surface)] transform transition-transform ${
+          open ? 'translate-x-0 w-72' : '-translate-x-full'
         }`}
       >
         <div class="flex items-center justify-between p-4 border-b border-[var(--border)]">
           <button type="button" class="btn-primary flex-1 flex items-center justify-center gap-2" onClick={onNewConversation}>
             <Plus size={18} />
             {t('newConversation')}
-          </button>
-          <button
-            type="button"
-            class="icon-btn ml-2 md:hidden"
-            onClick={() => { sidebarOpen.value = false }}
-            aria-label={t('cancel')}
-          >
-            <X size={18} />
           </button>
         </div>
         <nav class="flex-1 overflow-y-auto p-2 space-y-1">

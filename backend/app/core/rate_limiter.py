@@ -60,3 +60,6 @@ async def check_and_increment(client_ip: str) -> tuple[bool, int]:
 
 def reset_memory_store() -> None:
     _memory_counts.clear()
+
+def reset_memory_store() -> None:
+    _memory_counts.clear()

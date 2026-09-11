@@ -27,12 +27,12 @@ def _validate_request(request: ChatRequest) -> tuple[str, str, str]:
         )
         raise ChatServiceError(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
     if free_mode:
-        if not settings.groq_default_api_key:
+        if not settings.gemini_default_api_key:
             raise ChatServiceError(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Free mode is not configured on the server.",
             )
-        return "groq", settings.groq_default_api_key, settings.groq_default_model
+        return "gemini", settings.gemini_default_api_key, settings.gemini_default_model
     if not request.model:
         raise ChatServiceError(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -40,7 +40,7 @@ def _validate_request(request: ChatRequest) -> tuple[str, str, str]:
         )
     provider = request.provider
     if provider == "default":
-        provider = "groq"
+        provider = "gemini"
     if not is_allowed(provider, request.model):
         allowed = allowed_models_for(provider)
         raise ChatServiceError(

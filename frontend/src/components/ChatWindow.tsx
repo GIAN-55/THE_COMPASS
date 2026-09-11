@@ -5,10 +5,11 @@ import { ChatInput } from './ChatInput'
 import { MessageBubble } from './MessageBubble'
 
 interface ChatWindowProps {
-  onSend: (text: string) => void
+  onSend: (text: string, isEdit?: boolean) => void
+  onEdit: (messageId: string) => void
 }
 
-export function ChatWindow({ onSend }: ChatWindowProps) {
+export function ChatWindow({ onSend, onEdit }: ChatWindowProps) {
   const { t } = useTranslation()
   const conv = activeConversation.value
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -23,7 +24,14 @@ export function ChatWindow({ onSend }: ChatWindowProps) {
         {!conv || conv.messages.length === 0 ? (
           <p class="text-center text-sm text-[var(--text-secondary)] mt-12">{t('emptyChat')}</p>
         ) : (
-          conv.messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)
+          conv.messages.map((msg, index) => (
+            <MessageBubble 
+              key={msg.id} 
+              message={msg} 
+              isLast={index === conv.messages.length - 1}
+              onEdit={onEdit}
+            />
+          ))
         )}
         <div ref={bottomRef} />
       </div>
