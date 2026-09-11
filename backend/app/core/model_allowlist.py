@@ -7,7 +7,6 @@ class ModelEntry:
     context_tokens: int
 
 ALLOWLIST: tuple[ModelEntry, ...] = (
-    ModelEntry("groq", "llama-3.3-70b-versatile", 128_000),
     ModelEntry("groq", "openai/gpt-oss-120b", 128_000),
     ModelEntry("openai", "gpt-4o", 128_000),
     ModelEntry("openai", "gpt-4o-mini", 128_000),

@@ -93,8 +93,8 @@ export function useChatActions() {
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 429) apiError.value = t('errorRateLimit')
+        else if (err.message) apiError.value = err.message
         else if (err.status === 400) apiError.value = t('errorValidation')
-        else if (err.status === 502) apiError.value = t('errorGeneric')
         else apiError.value = t('errorGeneric')
       } else {
         apiError.value = t('errorGeneric')

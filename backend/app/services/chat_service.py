@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 
 from app.config import settings
 from app.core.model_allowlist import allowed_models_for, is_allowed
+from app.core.provider_errors import provider_error_detail
 from app.core.prompt_builder import build_system_prompt
 from app.core.rate_limiter import check_and_increment, reset_message
 from app.core.risk_detector import detect_risk, safety_notice_text
@@ -31,7 +32,7 @@ def _validate_request(request: ChatRequest) -> tuple[str, str, str]:
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Free mode is not configured on the server.",
             )
-        return "groq", settings.groq_default_api_key, settings.default_groq_model
+        return "groq", settings.groq_default_api_key, settings.groq_default_model
     if not request.model:
         raise ChatServiceError(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -74,7 +75,7 @@ async def process_chat(request: ChatRequest, client_ip: str) -> ChatResponse:
     except httpx.HTTPStatusError as exc:
         raise ChatServiceError(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"AI provider returned an error (HTTP {exc.response.status_code}).",
+            detail=provider_error_detail(exc, request.language),
         ) from exc
     except httpx.HTTPError as exc:
         raise ChatServiceError(

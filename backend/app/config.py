@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     free_message_limit: int = 1000
     byok_message_limit: int = 5000
     free_daily_limit: int = 3
-    default_groq_model: str = "llama-3.3-70b-versatile"
+    groq_default_model: str = "openai/gpt-oss-120b"
     docs_refresh_seconds: int = 600
     provider_timeout_seconds: float = 30.0
 
@@ -25,6 +25,10 @@ class Settings(BaseSettings):
         if self.frontend_origin:
             origins.append(self.frontend_origin)
         return origins
+
+    @property
+    def is_local_dev(self) -> bool:
+        return not self.frontend_origin
 
     @property
     def redis_configured(self) -> bool:

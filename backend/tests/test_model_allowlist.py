@@ -1,7 +1,7 @@
 from app.core.model_allowlist import allowed_models_for, allowed_providers, is_allowed
 
 def test_allows_whitelisted_groq_model():
-    assert is_allowed("groq", "llama-3.3-70b-versatile") is True
+    assert is_allowed("groq", "openai/gpt-oss-120b") is True
 
 def test_allows_whitelisted_openai_model():
     assert is_allowed("openai", "gpt-4o") is True

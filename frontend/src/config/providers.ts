@@ -10,7 +10,7 @@ export const PROVIDER_OPTIONS: ProviderOption[] = [
   {
     id: 'groq',
     labelKey: 'providers.groq',
-    models: ['llama-3.3-70b-versatile', 'openai/gpt-oss-120b'],
+    models: ['openai/gpt-oss-120b'],
   },
   {
     id: 'openai',

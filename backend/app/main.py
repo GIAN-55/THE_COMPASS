@@ -14,13 +14,15 @@ async def lifespan(app: FastAPI):
     await docs_loader.shutdown()
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+_cors: dict = {
+    "allow_origins": settings.cors_origins,
+    "allow_credentials": True,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
+if settings.is_local_dev:
+    _cors["allow_origin_regex"] = r"http://localhost:\d+"
+app.add_middleware(CORSMiddleware, **_cors)
 app.include_router(health.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 

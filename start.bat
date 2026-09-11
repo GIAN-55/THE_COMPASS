@@ -35,6 +35,10 @@ if not exist "backend\venv\" (
 echo Installing backend dependencies...
 call backend\venv\Scripts\pip.exe install -r backend\requirements.txt -q
 
+echo Stopping previous instances on ports 8000 and 5173...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do taskkill /F /PID %%a >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do taskkill /F /PID %%a >nul 2>&1
+
 echo.
 echo Launching services...
 echo.
