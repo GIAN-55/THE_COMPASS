@@ -13,6 +13,7 @@
     "@preact/signals": "^2.11.2",
     "idb": "^8.0.3",
     "lucide-preact": "^1.45.0",
+    "marked": "^18.0.12",
     "preact": "^10.29.8"
   },
   "devDependencies": {

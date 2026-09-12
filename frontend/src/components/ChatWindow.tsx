@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks'
 import { useTranslation } from '../i18n/context'
-import { activeConversation, apiError } from '../state/appState'
+import { activeConversation, apiError, isLoading } from '../state/appState'
 import { ChatInput } from './ChatInput'
 import { MessageBubble } from './MessageBubble'
 
@@ -17,6 +17,9 @@ export function ChatWindow({ onSend, onEdit }: ChatWindowProps) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [conv?.messages.length, conv?.messages.at(-1)?.content])
+  
+  // Find the last user message
+  const lastUserMessageId = conv ? [...conv.messages].reverse().find(m => m.role === 'user')?.id : null
 
   return (
     <main class="flex flex-1 flex-col min-w-0">
@@ -24,14 +27,22 @@ export function ChatWindow({ onSend, onEdit }: ChatWindowProps) {
         {!conv || conv.messages.length === 0 ? (
           <p class="text-center text-sm text-[var(--text-secondary)] mt-12">{t('emptyChat')}</p>
         ) : (
-          conv.messages.map((msg, index) => (
+          conv.messages.map((msg) => (
             <MessageBubble 
               key={msg.id} 
               message={msg} 
-              isLast={index === conv.messages.length - 1}
+              isLastUserMessage={msg.role === 'user' && msg.id === lastUserMessageId}
               onEdit={onEdit}
             />
           ))
+        )}
+        {isLoading.value && conv && conv.messages.length > 0 && (
+          <div class="flex justify-start">
+            <div class="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+              <div class="animate-spin rounded-full h-4 w-4 border-2 border-[var(--accent)] border-t-transparent"></div>
+              <span>{t('typing')}</span>
+            </div>
+          </div>
         )}
         <div ref={bottomRef} />
       </div>

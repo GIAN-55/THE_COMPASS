@@ -12,7 +12,7 @@ TOKEN = os.environ.get("GITHUB_GIST_TOKEN")
 MANUAL_GIST_ID = os.environ.get("MANUAL_GIST_ID")
 INDICACIONES_GIST_ID = os.environ.get("INDICACIONES_GIST_ID")
 
-MANUAL_LOCAL_PATH = "MANUAL_DE_MI_FILOSOFÍA.md"
+MANUAL_LOCAL_PATH = "MANUAL DE MI FILOSOFÍA.md"
 INDICACIONES_LOCAL_PATH = "indicaciones.md"
 
 API_URL = "https://api.github.com/gists/{gist_id}"

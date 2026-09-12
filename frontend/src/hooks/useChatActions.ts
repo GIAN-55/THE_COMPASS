@@ -62,7 +62,7 @@ export function useChatActions() {
       conv = conversations.value.find((c) => c.id === id)!
     }
     
-    // If editing, remove the message being edited and all messages after it
+    // If editing, remove the message being edited and ALL messages after it (including AI responses)
     if (isEdit && editingMessageId.value) {
       const messageIndex = conv.messages.findIndex(m => m.id === editingMessageId.value)
       if (messageIndex !== -1) {
@@ -86,38 +86,55 @@ export function useChatActions() {
     upsertConversation(withUser)
     await saveConversation(withUser)
     isLoading.value = true
-    try {
-      const response = await sendChat(
-        trimmed,
-        historyForApi(withUser.messages.slice(0, -1)),
-        language,
-        providerConfig.value,
-      )
-      const assistantMessage: Message = {
-        id: createId(),
-        role: 'assistant',
-        content: response.reply,
-        safetyNotice: response.safety_notice,
+    
+    // Retry logic with automatic retries
+    const maxRetries = 3
+    let lastError: Error | null = null
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await sendChat(
+          trimmed,
+          historyForApi(withUser.messages.slice(0, -1)),
+          language,
+          providerConfig.value,
+        )
+        const assistantMessage: Message = {
+          id: createId(),
+          role: 'assistant',
+          content: response.reply,
+          safetyNotice: response.safety_notice,
+        }
+        const complete: Conversation = {
+          ...withUser,
+          messages: [...withUser.messages, assistantMessage],
+          updatedAt: Date.now(),
+        }
+        upsertConversation(complete)
+        await saveConversation(complete)
+        isLoading.value = false
+        return // Success, exit the function
+      } catch (err) {
+        lastError = err
+        if (attempt < maxRetries) {
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
+          continue
+        }
       }
-      const complete: Conversation = {
-        ...withUser,
-        messages: [...withUser.messages, assistantMessage],
-        updatedAt: Date.now(),
-      }
-      upsertConversation(complete)
-      await saveConversation(complete)
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.status === 429) apiError.value = t('errorRateLimit')
-        else if (err.message) apiError.value = err.message
-        else if (err.status === 400) apiError.value = t('errorValidation')
-        else apiError.value = t('errorGeneric')
-      } else {
-        apiError.value = t('errorGeneric')
-      }
-    } finally {
-      isLoading.value = false
     }
+    
+    // All retries failed
+    if (lastError instanceof ApiError) {
+      if (lastError.status === 429) apiError.value = t('errorRateLimit')
+      else if (lastError.status === 502) apiError.value = t('errorProvider')
+      else if (lastError.message) apiError.value = lastError.message
+      else if (lastError.status === 400) apiError.value = t('errorValidation')
+      else apiError.value = t('errorGeneric')
+    } else {
+      apiError.value = t('errorGeneric')
+    }
+    isLoading.value = false
   }
   
   function editMessage(messageId: string) {

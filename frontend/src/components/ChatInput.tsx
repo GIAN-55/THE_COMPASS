@@ -60,9 +60,6 @@ export function ChatInput({ onSend }: ChatInputProps) {
 
   return (
     <div class="border-t border-[var(--border)] bg-[var(--surface)] p-4">
-      {isLoading.value && (
-        <p class="mb-2 text-xs text-[var(--text-secondary)]">{t('typing')}</p>
-      )}
       {isEditing && (
         <p class="mb-2 text-xs text-[var(--text-secondary)]">
           {t('edit')}
