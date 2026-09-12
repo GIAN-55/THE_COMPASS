@@ -89,7 +89,7 @@ export function useChatActions() {
     
     // Retry logic with automatic retries
     const maxRetries = 3
-    let lastError: Error | null = null
+    let lastError: unknown = null
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {

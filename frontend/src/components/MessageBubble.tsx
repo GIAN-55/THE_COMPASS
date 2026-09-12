@@ -20,12 +20,10 @@ export function MessageBubble({ message, isLastUserMessage, onEdit }: MessageBub
     }
   }
   
-  // Configure marked options to preserve empty lines
+  // Configure marked options
   marked.setOptions({
     breaks: true,
     gfm: true,
-    headerIds: false,
-    pedantic: false,
   })
   
   const renderedContent = !isUser ? marked.parse(message.content) : message.content
@@ -44,8 +42,8 @@ export function MessageBubble({ message, isLastUserMessage, onEdit }: MessageBub
             <p class="whitespace-pre-wrap">{message.content}</p>
           ) : (
             <div 
-              class="prose prose-sm max-w-none prose-p:mb-3 prose-headings:mb-3 prose-headings:font-semibold prose-strong:font-semibold prose-em:italic prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-white-space-pre-wrap"
-              dangerouslySetInnerHTML={{ __html: renderedContent }}
+              class="prose prose-sm max-w-none prose-p:mb-3 prose-headings:mb-3 prose-headings:font-semibold prose-strong:font-semibold prose-em:italic prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-h1:text-lg prose-h2:text-base prose-h3:text-sm"
+              dangerouslySetInnerHTML={{ __html: renderedContent as string }}
             />
           )}
           {!isUser && message.safetyNotice && (
