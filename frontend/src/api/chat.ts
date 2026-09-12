@@ -43,7 +43,8 @@ export async function sendChat(
   language: Language,
   config: ProviderConfig,
 ): Promise<ChatResponse> {
-  const response = await fetch(`${API_BASE}/api/chat`, {
+  const apiBase = API_BASE.replace(/\/$/, '') // Remove trailing slash
+  const response = await fetch(`${apiBase}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(buildPayload(message, history, language, config)),
