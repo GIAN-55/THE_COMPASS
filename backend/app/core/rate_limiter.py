@@ -28,22 +28,11 @@ def reset_message(language: str) -> str:
         "Usá tu propia API key para acceso ilimitado."
     )
 
-async def _redis_incr(key: str) -> int | None:
-    url = f"{settings.upstash_redis_url.rstrip('/')}/incr/{key}"
-    headers = {"Authorization": f"Bearer {settings.upstash_redis_token}"}
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        response = await client.post(url, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return int(data["result"])
-
-async def _redis_expire(key: str, seconds: int) -> None:
-    url = f"{settings.upstash_redis_url.rstrip('/')}/expire/{key}/{seconds}"
-    headers = {"Authorization": f"Bearer {settings.upstash_redis_token}"}
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        await client.post(url, headers=headers)
-
 async def check_and_increment(client_ip: str) -> tuple[bool, int]:
+    # Skip rate limiting in local development
+    if settings.is_local_dev:
+        return True, 0
+    
     key = _day_key(client_ip)
     limit = settings.free_daily_limit
     if settings.redis_configured:
@@ -57,9 +46,6 @@ async def check_and_increment(client_ip: str) -> tuple[bool, int]:
     count = _memory_counts.get(key, 0) + 1
     _memory_counts[key] = count
     return count <= limit, count
-
-def reset_memory_store() -> None:
-    _memory_counts.clear()
 
 def reset_memory_store() -> None:
     _memory_counts.clear()
