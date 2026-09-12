@@ -26,6 +26,8 @@ _cors: dict = {
 }
 if settings.is_local_dev:
     _cors["allow_origin_regex"] = r"http://localhost:\d+"
+elif settings.frontend_origin:
+    _cors["allow_origins"].append(settings.frontend_origin)
 app.add_middleware(CORSMiddleware, **_cors)
 app.include_router(health.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
